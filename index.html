@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .base-currency {
+            color: brown;
+        }
+
+        .data {
+            color: rgb(17, 224, 69);
+        }
+
+        .result-wrapper {
+            border: 1px solid black;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="result-wrapper">
+        <h2 class="base-currency"></h2>
+        <h3 class="data"></h3>
+        <div>
+            <h3 class="result-exchange-rate-aed"></h3>
+            <h3 class="result-exchange-rate-afn"></h3>
+            <h3 class="result-exchange-rate-all"></h3>
+        </div>
+        <h3 class="result-exchange-rate"></h3>
+    </div>
+
+    <h2 class="error"></h2>
+    <script>
+
+        const resultWrapperBlock = document.querySelector('.result-wrapper');
+        const baseСurrencyBlock = document.querySelector('.base-currency');
+        const dataBlock = document.querySelector('.data');
+        const resultExchangeRateAed = document.querySelector('.result-exchange-rate-aed');
+        const resultExchangeRateAfn = document.querySelector('.result-exchange-rate-afn');
+        const resultExchangeRateAll = document.querySelector('.result-exchange-rate-all');
+        const errorBlock = document.querySelector('.error');
+
+        function getExchangeRate() {
+            fetch(`https://api.exchangeratesapi.io/v1/latest?access_key=c9aea73e97371cb216e7654adfe14a5d`)
+                .then(response => {
+                    if (response.status !== 200) {
+                        throw new Error(`Status ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    baseСurrencyBlock.textContent = `базовая валюта - ${data.base}`;
+                    dataBlock.textContent = `дата - ${data.date}`
+                    resultExchangeRateAed.textContent = `AED - ${data.rates.AED}`;
+                    resultExchangeRateAfn.textContent = `AFN - ${data.rates.AFN}`;
+                    resultExchangeRateAll.textContent = `ALL - ${data.rates.ALL}`;
+                })
+                .catch((error) => {
+                    errorBlock.textContent = error.message ? error.message : error;
+                });
+        }
+        getExchangeRate();
+
+        setInterval(getExchangeRate, 60000);
+
+    </script>
+</body>
+
+</html>
